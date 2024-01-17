@@ -1,9 +1,10 @@
 POST localhost:8080/events
 content-type: application/json
+authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6IlRvbUJyYWR5IiwiZXhwIjoxNzA1NTEwNTg4LCJ1c2VySUQiOjB9.j4pW3i6FppK-hRIsGAHk-7_ysoOK2dFuN4azkCqobEQ
 
 {
-  "name":"Bob marley",
-  "description": "Be happy!",
-  "location": "New York",
-  "dateTime": "2001-01-13T15:30:00.000Z"
+  "name":"testing event",
+  "description": "this is a test!",
+  "location": "New Jersey",
+  "dateTime": "2021-01-17T15:30:00.000Z"
 }

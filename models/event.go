@@ -11,12 +11,12 @@ type Event struct {
 	Description string    `binding:"required"`
 	Location    string    `binding:"required"`
 	DateTime    time.Time `binding:"required"`
-	UserID      int
+	UserID      int64
 }
 
 //var events := []Event{} //empty array of type Event
 
-func (e Event) Save() error {
+func (e *Event) Save() error {
 	query := `
 INSERT INTO events
     (name,description,location,dateTime,user_id)
@@ -47,7 +47,7 @@ func GetALlEvents() ([]Event, error) {
 	//read all rows
 	for rows.Next() {
 		var event Event //reference to data at current row returned
-		err = rows.Scan(&event.ID, &event.Name, &event.Description, &event.Location, &event.DateTime)
+		err = rows.Scan(&event.ID, &event.Name, &event.Description, &event.Location, &event.DateTime, &event.UserID)
 		if err != nil {
 			return nil, err
 		}
