@@ -2,6 +2,7 @@ package models
 
 import (
 	"Rest_Api_Go/db"
+	"errors"
 	"time"
 )
 
@@ -92,4 +93,39 @@ func DeleteEvent(eventID int64) error {
 	defer stmt.Close()
 	_, err = stmt.Exec(eventID)
 	return err
+}
+
+func (e *Event) Register(userID int64) error {
+	query := "INSERT INTO registrations(eventID, userID) VALUES(?,?)"
+	stmt, err := db.DB.Prepare(query)
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+
+	_, err = stmt.Exec(e.ID, userID)
+	//if err != nil {
+	return err
+	//}
+	//id, err := res.LastInsertId()
+	//if err != nil {
+	//	return err
+	//}
+}
+
+func (e *Event) Cancel(userID int64) error {
+	query := "DELETE FROM registrations WHERE userID = ? AND eventID = ?"
+	stmt, err := db.DB.Prepare(query)
+
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+
+	result, err := stmt.Exec(userID, e.ID)
+	numRows, err := result.RowsAffected()
+	if numRows == 0 || err != nil {
+		return errors.New("Unable to delete registration")
+	}
+	return nil
 }

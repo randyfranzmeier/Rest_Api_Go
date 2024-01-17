@@ -54,3 +54,22 @@ func (u *User) ValidateLogin() error {
 	}
 	return nil
 }
+
+func (u *User) ChangePassword() error {
+	//query to update the password for the given user
+	query := "UPDATE users SET password = ? WHERE id = ?"
+	//preparing the query for efficiency and to prevent sql injection attacks
+	stmt, err := db.DB.Prepare(query)
+	//if there's an error we don't want to continue
+	if err != nil {
+		return err
+	}
+	//make sure the query statement gets closed when it's not needed
+	defer stmt.Close()
+	//we want to encrypt the password for security reasons
+	hashedPassword, err := utils.HashPasswords(u.Password)
+	u.Password = hashedPassword
+	//now the values should be ready to be passed in
+	_, err = stmt.Exec(u.Password, u.ID)
+	return err
+}
