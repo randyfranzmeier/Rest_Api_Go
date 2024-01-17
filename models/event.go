@@ -14,7 +14,7 @@ type Event struct {
 	UserID      int
 }
 
-var events = []Event{} //empty array of type Event
+//var events := []Event{} //empty array of type Event
 
 func (e Event) Save() error {
 	query := `
@@ -42,7 +42,7 @@ func GetALlEvents() ([]Event, error) {
 	if err != nil {
 		return nil, err
 	}
-	//defer rows.Close() //free up memory by closing fetched rows
+	defer rows.Close() //free up memory by closing fetched rows
 	var events []Event
 	//read all rows
 	for rows.Next() {
@@ -53,7 +53,6 @@ func GetALlEvents() ([]Event, error) {
 		}
 		events = append(events, event)
 	}
-	defer rows.Close() //free up memory by closing fetched rows
 	return events, nil
 }
 
@@ -67,4 +66,30 @@ func GetEventByID(id int64) (*Event, error) {
 		return nil, err
 	}
 	return &event, nil
+}
+
+func (event Event) Update() error {
+	query := `
+UPDATE events 
+SET name = ?, description = ?, location = ?, dateTime = ?
+WHERE id = ?`
+	stmt, err := db.DB.Prepare(query)
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+
+	_, err = stmt.Exec(event.Name, event.Description, event.Location, event.DateTime, event.ID)
+	return err
+}
+
+func DeleteEvent(eventID int64) error {
+	query := "DELETE FROM events WHERE id = ?"
+	stmt, err := db.DB.Prepare(query)
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+	_, err = stmt.Exec(eventID)
+	return err
 }
